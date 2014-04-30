@@ -2,11 +2,13 @@ package mars.fragmentsexample;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
@@ -17,7 +19,7 @@ public class MainActivity extends Activity {
   FragmentTransaction fTrans;
   CheckBox chbStack;
 
-  public void onCreate(Bundle savedInstanceState) {
+  @SuppressLint("NewApi") public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     
@@ -27,6 +29,10 @@ public class MainActivity extends Activity {
     frag2 = new Fragment2();
     
     chbStack = (CheckBox)findViewById(R.id.chbStack);
+    
+    FragmentTransaction ft = getFragmentManager().beginTransaction();
+    ft.add(R.id.frgmCont, frag2);
+    ft.commit();
   }
 
   protected void onStart() {
@@ -65,6 +71,19 @@ public class MainActivity extends Activity {
 		  break;
 	  case R.id.btnReplace:
 		  fTrans.replace(R.id.frgmCont, frag2);
+		  break;
+	  case R.id.btnFind:
+		  {
+			  Fragment frag1 = getFragmentManager().findFragmentById(R.id.fragment1);
+		  
+		    ((TextView) frag1.getView().findViewById(R.id.textView1))
+		        .setText("Access to Fragment 1 from Activity");
+
+		    Fragment frag2 = getFragmentManager().findFragmentById(R.id.frgmCont);
+		    ((TextView) frag2.getView().findViewById(R.id.textView2))
+		        .setText("Access to Fragment 2 from Activity");
+		  }
+		  break;
 	  default:
 		  break;
 	  }

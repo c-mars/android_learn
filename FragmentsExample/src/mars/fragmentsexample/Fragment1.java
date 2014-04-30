@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 @SuppressLint("NewApi") public class Fragment1 extends Fragment {
 
@@ -27,7 +29,17 @@ import android.view.ViewGroup;
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     Log.d(LOG_TAG, "Fragment1 onCreateView");
-    return inflater.inflate(R.layout.fragment1, null);
+    View v = inflater.inflate(R.layout.fragment1, null);
+    
+    Button button = (Button) v.findViewById(R.id.button);
+    button.setOnClickListener(new OnClickListener() {
+    	public void onClick(View v) {
+    		Log.d(LOG_TAG, "Button click in Fragment1");
+    		((Button)getActivity().findViewById(R.id.btnFind)).setText("Access from Fragment1");
+    	}
+    });
+
+    return v;
   }
 
   public void onActivityCreated(Bundle savedInstanceState) {
