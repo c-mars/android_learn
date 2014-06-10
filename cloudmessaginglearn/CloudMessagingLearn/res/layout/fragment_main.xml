@@ -13,4 +13,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <Layout 
+        android:orientation="horizontal" >
+    	
+    <Button 
+        android:id="@+id/send" />
+    <Button 
+        android:id="@+id/clear" />    
+    </Layout>
+    
 </RelativeLayout>
