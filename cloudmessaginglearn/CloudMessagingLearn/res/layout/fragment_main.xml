@@ -8,18 +8,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="c.mars.cloudmessaginglearn.MainActivity$PlaceholderFragment" >
 
-    <TextView
-        android:id="@+id/display"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <Layout 
-        android:orientation="horizontal" >
-    	
-    <Button 
-        android:id="@+id/send" />
-    <Button 
-        android:id="@+id/clear" />    
-    </Layout>
+    
     
 </RelativeLayout>

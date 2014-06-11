@@ -3,13 +3,6 @@ package c.mars.cloudmessaginglearn;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -17,25 +10,32 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
-import android.os.Build;
 
-public class MainActivity extends ActionBarActivity {
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+
+public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 	private static String TAG = "MainActivity";
 	
 	public static final String EXTRA_MESSAGE = "message";
-    public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     
-    String SENDER_ID = "768896320566";
+    public static final String SENDER_ID = "768896320566"; // Project Id
+    public static final String PROPERTY_REG_ID = "regId"; // Api Key
     
     GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
@@ -43,6 +43,7 @@ public class MainActivity extends ActionBarActivity {
     Context context;
     String regid;
 	TextView display;
+    Button send;
     
     @SuppressLint("NewApi") @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +57,9 @@ public class MainActivity extends ActionBarActivity {
         }
         
         this.display = (TextView)findViewById(R.id.display);
+        this.send = (Button)findViewById(R.id.send);
+        this.send.setOnClickListener(this);
+        
         context = getApplicationContext();
         
         // Check device for Play Services APK.
@@ -69,11 +73,14 @@ public class MainActivity extends ActionBarActivity {
             if (regid.isEmpty()) {
                 registerInBackground();
             }
+            
+            display.setText("GCM Demo launched");
         } else {
-        	Log.i(TAG, "No valid Google Play Services APK found.");
+        	String message = "No valid Google Play Services APK found.";
+        	Log.i(TAG, message);
+        	display.setText(message);
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -126,10 +133,10 @@ public class MainActivity extends ActionBarActivity {
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
         if (resultCode != ConnectionResult.SUCCESS) {
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
-                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            	Log.i(TAG, "isUserRecoverableError returned true");
+            	GooglePlayServicesUtil.getErrorDialog(resultCode, this, PLAY_SERVICES_RESOLUTION_REQUEST).show();
             } else {
-                Log.i(TAG, "This device is not supported.");
+                Log.i(TAG, "This device is not supported. isGooglePlayServicesAvailable returned resultCode=" + resultCode);
                 finish();
             }
             return false;
@@ -146,8 +153,8 @@ public class MainActivity extends ActionBarActivity {
      *         registration ID.
      */
     @SuppressLint("NewApi") private String getRegistrationId(Context context) {
-        final SharedPreferences prefs = getGCMPreferences(context);
-        String registrationId = prefs.getString(PROPERTY_REG_ID, "");
+//        final SharedPreferences prefs = getGCMPreferences(context);
+        String registrationId = "AIzaSyBndW05gOOSnhoo2OxrvZd7Bg0yTs9odt0"; //prefs.getString(PROPERTY_REG_ID, "");
         if (registrationId.isEmpty()) {
             Log.i(TAG, "Registration not found.");
             return "";
@@ -155,12 +162,12 @@ public class MainActivity extends ActionBarActivity {
         // Check if app was updated; if so, it must clear the registration ID
         // since the existing regID is not guaranteed to work with the new
         // app version.
-        int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
-        int currentVersion = this.getAppVersion(context);
-        if (registeredVersion != currentVersion) {
-            Log.i(TAG, "App version changed.");
-            return "";
-        }
+//        int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
+//        int currentVersion = this.getAppVersion(context);
+//        if (registeredVersion != currentVersion) {
+//            Log.i(TAG, "App version changed.");
+//            return "";
+//        }
         return registrationId;
     }
     
@@ -215,6 +222,7 @@ public class MainActivity extends ActionBarActivity {
        editor.putInt(PROPERTY_APP_VERSION, appVersion);
        editor.commit();
    }
+   
    private void registerInBackground() {
 	    new AsyncTask<Void, Integer, String>() {
 	        @Override
@@ -255,34 +263,38 @@ public class MainActivity extends ActionBarActivity {
 	    }.execute(null, null, null);
 	 
 	}   
-   public void onClick(final View view) {
-	    if (view == findViewById(R.id.send)) {
-	        new AsyncTask<Void, Integer, String>() {
-	            
-	        	@Override
-	            protected String doInBackground(Void... params) {
-	                String msg = "";
-	                try {
-	                    Bundle data = new Bundle();
-	                        data.putString("my_message", "Hello World");
-	                        data.putString("my_action",
-	                                "com.google.android.gcm.demo.app.ECHO_NOW");
-	                        String id = Integer.toString(msgId.incrementAndGet());
-	                        gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
-	                        msg = "Sent message";
-	                } catch (IOException ex) {
-	                    msg = "Error :" + ex.getMessage();
-	                }
-	                return msg;
-	            }
 
-	            protected void onPostExecute(String msg) {
-	                display.append(msg + "\n");
-	            }
+   @Override
+   public void onClick(View view) {
+	   if (view == findViewById(R.id.send)) {
+		   new AsyncTask<Void, Integer, String>() {
 
-	        }.execute(null, null, null);
-	    } else if (view == findViewById(R.id.clear)) {
-	        display.setText("");
-	    }
-	}
+			   @Override
+			   protected String doInBackground(Void... params) {
+				   String msg = "";
+				   try {
+					   Bundle data = new Bundle();
+					   data.putString("my_message", "Hello World");
+					   data.putString("my_action",
+							   "com.google.android.gcm.demo.app.ECHO_NOW");
+					   String id = Integer.toString(msgId.incrementAndGet());
+					   gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
+					   msg = "Sent message";
+				   } catch (IOException ex) {
+					   msg = "Error :" + ex.getMessage();
+				   }
+				   return msg;
+			   }
+
+			   protected void onPostExecute(String msg) {
+				   display.append("\n" + msg);
+			   }
+
+		   }.execute(null, null, null);
+	   }
+	   //    else if (view == findViewById(R.id.clear)) {
+	   //        display.setText("");
+	   //    }
+
+   }
 }
