@@ -10,15 +10,21 @@
      <ImageView 
         android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="250dp"
         android:src="@drawable/ic_launcher"
         android:layout_marginBottom="10dp"
         android:layout_gravity="center" 
         android:contentDescription=""/>
     
-    <Gallery
-        android:id="@+id/gallery"
+    <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content" >
+        <LinearLayout
+            android:id="@+id/gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            />
+    </HorizontalScrollView>
     
 </LinearLayout>
