@@ -7,6 +7,13 @@
     tools:context="c.mars.imagecachingex.MainActivity"
     tools:ignore="MergeRootFrame" >
     
+    
+     <Button 
+		    android:id="@+id/button"
+		    android:text="load photo" 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"/>
+    
      <ImageView 
         android:id="@+id/imageView"
         android:layout_width="match_parent"
@@ -16,7 +23,7 @@
         android:layout_gravity="center" 
         android:contentDescription=""/>
     
-    <HorizontalScrollView
+		<HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
         <LinearLayout
@@ -25,6 +32,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             />
-    </HorizontalScrollView>
-    
+    	</HorizontalScrollView>
+ 
+		
 </LinearLayout>
