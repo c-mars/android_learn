@@ -30,6 +30,8 @@ public class ImageLoader {
     private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
     ExecutorService executorService; 
     Context context;
+    boolean fromAssets = true;
+    int stub_id=R.drawable.ic_launcher;
     
     public ImageLoader(Context context){
         this.context = context;
@@ -37,7 +39,14 @@ public class ImageLoader {
         executorService=Executors.newFixedThreadPool(5);
     }
     
-    final int stub_id=R.drawable.ic_launcher;
+    public void setFromAssets(boolean fromAssets) {
+    	this.fromAssets = fromAssets;
+    }
+    
+    public void setPlaceHolderResourceId(int resId) {
+    	stub_id = resId;
+    }
+    
     public void DisplayImage(String url, ImageView imageView)
     {
         imageViews.put(imageView, url);
@@ -56,8 +65,6 @@ public class ImageLoader {
         PhotoToLoad p=new PhotoToLoad(url, imageView);
         executorService.submit(new PhotosLoader(p));
     }
-    
-    boolean fromAssets = true;
     
     private Bitmap getBitmap(String url) 
     {
